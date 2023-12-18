@@ -9,13 +9,13 @@
 - Analizar los resultados comparando con el ground truth y cambiando parámetros
 
 ## PARTE B
-- Seleccionar métricas para el fitness 
+- ~~Seleccionar métricas para el fitness~~ 
 - Implementar:
 	- función objetivo
 	- ~~codificación y población~~
 	- ~~decodificación~~
 	- ~~plot~~
-	- mutaciones
+	- ~~mutaciones~~
 	- crossovers
 	- remplazo
 	- reparación
