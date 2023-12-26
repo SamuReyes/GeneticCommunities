@@ -5,28 +5,27 @@
 - Samuel Reyes Sanz
 
 ## PARTE A
-- Implementar Leiden
-- Analizar los resultados comparando con el ground truth y cambiando parámetros
+- E: Implementar Leiden
+- E: Analizar los resultados comparando con el ground truth y cambiando parámetros
 
 ## PARTE B
-- ~~Seleccionar métricas para el fitness~~ 
-- Implementar:
-	- función objetivo
-	- ~~codificación y población~~
-	- ~~decodificación~~
-	- ~~plot~~
-	- ~~mutaciones~~
-	- crossovers
-	- remplazo
-	- reparación
-	- algoritmo (condición de parada e hiperparámetros)
+- ~~S: Seleccionar métricas para el fitness~~ 
+- ~~S: función objetivo~~
+- ~~S: codificación y población~~
+- ~~S: decodificación~~
+- ~~S: plot~~
+- ~~S: mutaciones~~
+- ~~S: crossovers~~
+- ~~S: remplazo~~
+- ~~S: NSGA~~
+- E: MOGA
 
 ## PARTE C
-- Búsqueda de métricas para comparar Paretos
-- Búsqueda de hiperparámetros para la Parte B usando las métricas
-- Análisis de los mejores frentes de Pareto y sus soluciones comparando con ground truth
+- E: Búsqueda de métricas para comparar Paretos
+- E: Búsqueda de hiperparámetros para la Parte B usando las métricas
+- E: Análisis de los mejores frentes de Pareto y sus soluciones comparando con ground truth
 
 ## PARTE D
-- Memoria
-- Limpiar el repositorio
-- Presentación
+- S y E: Memoria
+- S y E: Limpiar el repositorio
+- S y E: Presentación
