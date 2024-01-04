@@ -208,7 +208,7 @@ class MOGA():
         # Assigning solutions to the appropriate front
         for idx, count in enumerate(domination_counts):
             # fronts[count].append(self.pop[idx]) #Returns the graph of the individual "idx"
-            fronts[count].append(idx)           #Returns the index of the individual "idx"
+            fronts[count].append(idx)             #Returns the index of the individual "idx"
 
         return fronts[:-1]
     
@@ -323,6 +323,7 @@ class MOGA():
             parent2 = parent1
             while parent1 == parent2:
                 parent2 = self.tournament(old_fitness)
+            
             child1, child2 = self.crossover(parent1, parent2)
 
             self.mutate(child1)
@@ -389,8 +390,11 @@ class MOGA():
             sorted_individuals_by_fitness = sorted(range(len(F)), key=F.__getitem__, reverse=False)
             sorted_individuals_by_fitness
 
-            self.pop = sorted_individuals_by_fitness[:self.N]
-
+            #We assign the individuals with the best fitness from the indexes to the next generation
+            n_sorted_individuals_idx = sorted_individuals_by_fitness[:self.N]
+            sorted_population = [self.pop[i] for i in n_sorted_individuals_idx]
+            self.pop = sorted_population.copy()
+            
             if _ % 100 == 0:
                 print(f"Generación {_}")
                 self.plot_pareto_front(paretos[0], fitness_pop)
