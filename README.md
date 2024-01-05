@@ -18,7 +18,7 @@
 - ~~S: crossovers~~
 - ~~S: remplazo~~
 - ~~S: NSGA~~
-- E: MOGA
+- ~~E: MOGA~~
 
 ## PARTE C
 - E: Búsqueda de métricas para comparar Paretos

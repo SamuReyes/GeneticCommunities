@@ -24,7 +24,7 @@ class UnionFind:
 
 class NSGA():
         
-    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=1000, fitness_metrics=1, n_tour = 4, crossover_op=2):
+    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=500, fitness_metrics=1, n_tour = 4, crossover_op=2):
         self.graph = graph # Grafo
         self.N = N # Tamaño de la población
         self.pop = [] # Población
@@ -35,6 +35,7 @@ class NSGA():
         self.fitness_metrics = fitness_metrics # Par de métricas utilizadas para el fitness
         self.n_tour = n_tour # Número de participantes en el torneo
         self.crossover_op = crossover_op # Operador de cruce
+        self.epsilon = 1e-10 # Epsilon para evitar división por 0
 
     def __choose_with_prob(self, prob):
         if random.random() <= prob:
@@ -147,10 +148,10 @@ class NSGA():
     def fitness(self, individual: list[int]) -> float:
         """ Calcula el fitness de un individuo
 
-        0: {Community score+, Internal density}
+        0: {Community score +, Internal density +}
         1: {Q +, Internal density +}
-        2: {Community score+, Average-ODF}
-        3: {Community score+, Max-ODF}
+        2: {Community score +, Average-ODF}
+        3: {Community score +, Max-ODF}
 
         """
         
@@ -162,20 +163,20 @@ class NSGA():
         if self.fitness_metrics == 0:
             community_score = sum(cdlib.evaluation.average_internal_degree(self.graph, NodeClustering, summary=False))
             internal_density = sum(1 - cdlib.evaluation.internal_edge_density(self.graph, community).score for community in NodeClusteringCommunities)
-            return [community_score, internal_density]
+            return (community_score, internal_density)
         
         elif self.fitness_metrics == 1:
             q = cdlib.evaluation.newman_girvan_modularity(self.graph, NodeClustering).score
             internal_density = sum(1 - cdlib.evaluation.internal_edge_density(self.graph, community).score for community in NodeClusteringCommunities)
-            return [q, internal_density]
+            return (q, internal_density)
         
         elif self.fitness_metrics == 2:
-            avg_odf = sum(cdlib.evaluation.avg_odf(self.graph, community).score for community in NodeClusteringCommunities)
+            avg_odf = 1 / (sum(cdlib.evaluation.avg_odf(self.graph, community).score for community in NodeClusteringCommunities) + self.epsilon)
             community_score = sum(cdlib.evaluation.average_internal_degree(self.graph, NodeClustering, summary=False))
-            return [community_score, avg_odf]
+            return (community_score, avg_odf)
         
         elif self.fitness_metrics == 3:
-            max_odf = sum(cdlib.evaluation.max_odf(self.graph, community).score for community in NodeClusteringCommunities)
+            max_odf = 1 / (sum(cdlib.evaluation.max_odf(self.graph, community).score for community in NodeClusteringCommunities) + self.epsilon)
             community_score = sum(cdlib.evaluation.average_internal_degree(self.graph, NodeClustering, summary=False))
             return (community_score, max_odf)
         
@@ -378,3 +379,5 @@ class NSGA():
             if _ % 100 == 0:
                 print(f"Generación {_}")
                 self.plot_pareto_front(paretos[0], fitness_pop)
+        
+        return self.pop, old_fitness, paretos[0]
