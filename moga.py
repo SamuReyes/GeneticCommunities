@@ -404,4 +404,4 @@ class MOGA():
                     print(f"Generación {_}")
                     self.plot_pareto_front(paretos[0], fitness_pop)
 
-        return self.pop, old_pop, fitness_pop, paretos[0]
+        return old_pop, fitness_pop, paretos[0]
