@@ -24,7 +24,7 @@ class UnionFind:
 
 class MOGA():
         
-    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=500, fitness_metrics=1, n_tour = 4, crossover_op=2, sigma = 0.2):
+    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=500, fitness_metrics=1, n_tour = 4, crossover_op=2, sigma = 0.2, show_plot = False):
         self.graph = graph # Grafo
         self.N = N # Tamaño de la población
         self.pop = [] # Población
@@ -37,6 +37,7 @@ class MOGA():
         self.crossover_op = crossover_op # Operador de cruce
         self.epsilon = 1e-10 # Epsilon para evitar división por 0
         self.sigma = sigma # Sigma que controla la penalizacion por nichos para la función de sharing
+        self.show_plot = show_plot # Mostrar plot de la población
 
     def __choose_with_prob(self, prob):
         if random.random() <= prob:
@@ -398,8 +399,9 @@ class MOGA():
             old_pop = self.pop.copy()
             self.pop = sorted_population.copy()
             
-            if _ % 100 == 0:
-                print(f"Generación {_}")
-                self.plot_pareto_front(paretos[0], fitness_pop)
+            if self.show_plot != False:
+                if _ % self.show_plot == 0:
+                    print(f"Generación {_}")
+                    self.plot_pareto_front(paretos[0], fitness_pop)
 
         return self.pop, old_pop, fitness_pop, paretos[0]
