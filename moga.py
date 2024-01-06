@@ -24,7 +24,7 @@ class UnionFind:
 
 class MOGA():
         
-    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=500, fitness_metrics=1, n_tour = 4, crossover_op=2):
+    def __init__(self, graph, N=100, init=0.5, pcross=0.7, pmut=0.1, n_iter=500, fitness_metrics=1, n_tour = 4, crossover_op=2, sigma = 0.2):
         self.graph = graph # Grafo
         self.N = N # Tamaño de la población
         self.pop = [] # Población
@@ -36,6 +36,7 @@ class MOGA():
         self.n_tour = n_tour # Número de participantes en el torneo
         self.crossover_op = crossover_op # Operador de cruce
         self.epsilon = 1e-10 # Epsilon para evitar división por 0
+        self.sigma = sigma # Sigma que controla la penalizacion por nichos para la función de sharing
 
     def __choose_with_prob(self, prob):
         if random.random() <= prob:
@@ -214,9 +215,9 @@ class MOGA():
         return fronts[:-1]
     
     
-    def sharing_function(self, distance, sigma = 0.1):
-        if distance < sigma:
-            return 1 - (distance / sigma)
+    def sharing_function(self, distance):
+        if distance < self.sigma:
+            return 1 - (distance / self.sigma)
         else:
             return 0
 
@@ -227,12 +228,12 @@ class MOGA():
         return distance
 
 
-    def adjusted_fitness(self, individual, population, sigma, F, fitness):
+    def adjusted_fitness(self, individual, population, F, fitness):
         shared_fitness = 0
         for other_individual in population:
             if individual != other_individual:
                 distance = self.calculate_distance(individual, other_individual, fitness)
-                shared_fitness += self.sharing_function(distance, sigma)
+                shared_fitness += self.sharing_function(distance)
                 
         shared_fitness = max(shared_fitness, 1)
         return F[individual] / shared_fitness
@@ -383,7 +384,7 @@ class MOGA():
                     F[i_value] = pop_len - 0.5 * ((μ_ri+1) - 1) - Σμ_k
 
                     # We apply a niching technique to keep diversity
-                    F[i_value] = self.adjusted_fitness(i_value, front, 0.2, F, fitness_pop)
+                    F[i_value] = self.adjusted_fitness(i_value, front, F, fitness_pop)
 
                 Σμ_k += len(front)
 
@@ -393,10 +394,12 @@ class MOGA():
             #We assign the individuals with the best fitness from the indexes to the next generation
             n_sorted_individuals_idx = sorted_individuals_by_fitness[:self.N]
             sorted_population = [self.pop[i] for i in n_sorted_individuals_idx]
+
+            old_pop = self.pop.copy()
             self.pop = sorted_population.copy()
             
             if _ % 100 == 0:
                 print(f"Generación {_}")
                 self.plot_pareto_front(paretos[0], fitness_pop)
 
-        return self.pop, old_fitness, paretos[0]
+        return self.pop, old_pop, fitness_pop, paretos[0]

@@ -373,11 +373,11 @@ class NSGA():
                 next_gen.extend([self.pop[i] for i in front])
                 old_fitness.extend([fitness_pop[i] for i in front])
 
-
+            old_pop = self.pop.copy()
             self.pop = next_gen
 
             if _ % 100 == 0:
                 print(f"Generación {_}")
                 self.plot_pareto_front(paretos[0], fitness_pop)
         
-        return self.pop, old_fitness, paretos[0]
+        return self.pop, old_pop, fitness_pop, paretos[0]
