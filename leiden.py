@@ -1,7 +1,4 @@
-from nsga import NSGA
-from moga import MOGA
 import networkx as nx
-import matplotlib.pyplot as plt
 import random
 
 def Modularity(graph):
