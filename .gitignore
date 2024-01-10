@@ -29,6 +29,7 @@ _pycahe_/
 *.log
 *.sql
 *.sqlite
+*.pyc
 
 # OS generated files #
 ######################
