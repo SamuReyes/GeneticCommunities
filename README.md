@@ -21,8 +21,8 @@
 - ~~E: MOGA~~
 
 ## PARTE C
-- E: Búsqueda de métricas para comparar Paretos
-- E: Búsqueda de hiperparámetros para la Parte B usando las métricas
+- ~~S: Búsqueda de métricas para comparar Paretos~~
+- ~~S: Búsqueda de hiperparámetros para la Parte B usando las métricas~~
 - E: Análisis de los mejores frentes de Pareto y sus soluciones comparando con ground truth
 
 ## PARTE D
