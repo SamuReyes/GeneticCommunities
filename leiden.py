@@ -21,7 +21,7 @@ def Modularity(graph):
 
     # Step 3: Calculate modularity
     modularity = nx.algorithms.community.modularity(graph, community_list)
-    
+
     return modularity
 
 
@@ -35,54 +35,68 @@ def is_connected_subgraph(graph, nodes):
 
 
 
-def find_best_community_for_node(graph, max_modularity, node):
+def find_best_community_for_node(graph, original_graph, node):
     """
     Find the best community for the given node.
     """
+    improved = False
     neighbors = list(graph.neighbors(node))
 
     # If the node has no neighbors, we can't move it anywhere
     if len(neighbors) == 0:
-        return graph, max_modularity
+        return graph, original_graph, improved
 
+    # Find the communities of the node's neighbors
     neighbor_communities = set()
     for neighbor in neighbors:
-
         neighbor_community = graph._node[neighbor]["community"]
-        
-        # try:
-        #     neighbor_community = graph._node[neighbor]["community"]
-        # except:
-        #     with open ("log.txt", "w") as file:
-        #         file.write(str(vars(graph)))
-
         neighbor_communities.add(neighbor_community)
 
     # If the node is already in a community by itself, we can't move it anywhere
     if len(neighbor_communities) == 0:
-        return graph, max_modularity
+        return graph, original_graph, improved
 
     # If the node is already in a community with all of its neighbors, we don't need to move it
     if len(neighbor_communities) == 1 and graph._node[node]["community"] in neighbor_communities:
-        return graph, max_modularity
+        return graph, original_graph, improved
 
     neighbor_communities = list(neighbor_communities)          
     neighbor_communities = sorted(neighbor_communities)
     
     # Try moving the node to each of its neighbor's communities
+    initial_graph = graph.copy()
     saved_graph = graph.copy()
+    max_modularity = Modularity(graph)
+
     for community in neighbor_communities:
         graph._node[node]["community"] = community
 
         # Check if the resulting community is a connected subgraph
         community_nodes = [n for n, attr in graph.nodes(data=True) if attr["community"] == community]
-        if is_connected_subgraph(graph, community_nodes):
-            modularity = Modularity(graph)
-            if modularity > max_modularity:
-                max_modularity = modularity
-                saved_graph = graph.copy()
+        if not is_connected_subgraph(graph, community_nodes):
+            continue
 
-    return saved_graph, max_modularity
+        # Check if the graph has improved the modularity
+        modularity = Modularity(graph)
+        if modularity <= max_modularity:
+            continue
+        
+        else:
+            improved = True
+            max_modularity = modularity
+            saved_graph = graph.copy()
+
+    # Pass the changes of the best community in the aggregated graph to the original graph
+    if improved:       
+        # Find the node values in the original graph that belong to the same community as the node in the aggregated graph
+        node_values = [n for n, data in original_graph._node.items() if data['community'] == initial_graph._node[node]['community']]
+
+        # Set the community of the node in the original graph to the community of the node in the aggregated graph
+        for n in node_values:
+            original_graph._node[n]['community'] = saved_graph._node[node]['community']
+
+
+    return saved_graph, original_graph, improved
 
 
 
@@ -108,6 +122,10 @@ def aggregate_network(graph):
         if community_u != community_v:
             aggregated_graph.add_edge(community_u, community_v)
 
+    # Step 5: Add node attributes to the aggregated graph
+    for n in aggregated_graph.nodes():
+        aggregated_graph._node[n]['community'] = n
+
     return aggregated_graph
 
 
@@ -120,35 +138,33 @@ def Leiden(graph, refinement_probability=0.2):
     # Intialize each node to its own community
     for node in graph.nodes():
         graph._node[node]["community"] = node
-    max_modularity = -1
+
+    original_graph = graph.copy()
 
     # Iteratively improve modularity
     while True:
 
         # Step 1: Local moving of nodes
-        improved = False
+        global_improved = False
         for node in graph.nodes():
-            graph, modularity = find_best_community_for_node(graph, max_modularity, node)
-            if modularity > max_modularity:
-                improved = True
-                max_modularity = modularity
+            graph, original_graph, improved = find_best_community_for_node(graph, original_graph, node)
+            if improved == True:
+                global_improved = True
 
         # Step 2: Refinement phase
-        refined = False
+        global_refined = False
         for node in graph.nodes():
             random_number = random.uniform(0, 1)
             if random_number <= refinement_probability:
-                graph, modularity = find_best_community_for_node(graph, max_modularity, node)
-                
-                if modularity > max_modularity:
-                    refined = True
-                    max_modularity = modularity
+                graph, original_graph, refined = find_best_community_for_node(graph, original_graph, node)
+                if refined == True:
+                    global_refined = True
 
         # Step 3: Network aggregation
-
         graph = aggregate_network(graph)
         
-        if not improved and not refined:
+        # Step 4: Stopping condition
+        if not global_improved and not global_refined:
             break
                     
-    return graph, modularity
+    return original_graph
