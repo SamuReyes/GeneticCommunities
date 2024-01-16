@@ -217,6 +217,7 @@ class MOGA():
     
     
     def sharing_function(self, distance):
+        """ Función de nicho que penaliza a los individuos cercanos """
         if distance < self.sigma:
             return 1 - (distance / self.sigma)
         else:
@@ -224,12 +225,14 @@ class MOGA():
 
 
     def calculate_distance(self, individual1, individual2, fitness):
+        """ Calcula la distancia entre dos individuos """
         distance_pow_2 = (fitness[individual1][0] - fitness[individual2][0])**2 + (fitness[individual1][1] - fitness[individual2][1])**2
         distance = distance_pow_2**0.5
         return distance
 
 
     def adjusted_fitness(self, individual, population, F, fitness):
+        """ Calcula el fitness ajustado de un individuo """
         shared_fitness = 0
         for other_individual in population:
             if individual != other_individual:
@@ -238,6 +241,7 @@ class MOGA():
                 
         shared_fitness = max(shared_fitness, 1)
         return F[individual] / shared_fitness
+    
 
     def tournament(self, old_fitness):
         """ Selección de padres por torneo """
