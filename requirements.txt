@@ -1,0 +1,9 @@
+matplotlib
+numpy
+networkx
+cdlib
+scikit-learn
+python-igraph
+leidenalg
+pymoo
+jupyter
