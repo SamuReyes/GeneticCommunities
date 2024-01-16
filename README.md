@@ -24,11 +24,11 @@ $ pip install -r requirements.txt
 ```
 By following these steps, you will have all the necessary dependencies installed and be ready to run the project.
 
-# ☕ Usage
+## ☕ Usage
 
 This project is primarily interacted with through Jupyter Notebooks, which provide a user-friendly interface for running various functions and algorithms.
 
-## Main Notebook: `main.ipynb`
+### Main Notebook: `main.ipynb`
 
 The `main.ipynb` notebook is the central file where you can perform a variety of tasks:
 
@@ -39,15 +39,15 @@ The `main.ipynb` notebook is the central file where you can perform a variety of
 
 Each section within the notebook is well-documented, providing clear instructions and explanations on how to execute and utilize each function.
 
-## Hyperparameter Tuning Notebook: `hp_tunning.ipynb`
+### Hyperparameter Tuning Notebook: `hp_tunning.ipynb`
 
 In addition to the main notebook, there is a `hp_tunning.ipynb` notebook specifically designed for hyperparameter tuning of the genetic algorithms.
 
-## Getting Started
+## ▶️ Getting Started
 
 To start using these notebooks:
 
-1. Ensure you have followed the [Installation of Dependencies](#installation-of-dependencies) section to set up your environment.
+1. Ensure you have followed the Installation of Dependencies section to set up your environment.
 2. Open the desired notebook (`main.ipynb` or `hp_tunning.ipynb`) in Jupyter Notebook or JupyterLab.
 3. Follow the instructions and documentation within each notebook to execute different functions and algorithms.
 
